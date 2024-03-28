@@ -42,8 +42,9 @@ import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 public class EssentialsExpansion extends PlaceholderExpansion {
@@ -253,6 +254,15 @@ public class EssentialsExpansion extends PlaceholderExpansion {
             Kit kit;
             User user = essentials.getUser(player.getUniqueId());
             long time;
+
+            if (kitName.startsWith("raw_")) {
+                raw = true;
+                kitName = kitName.substring(4);
+
+                if (kitName.isEmpty()) {
+                    return "Invalid kit name";
+                }
+            }
 
             try {
                 kit = new Kit(kitName, essentials);
@@ -479,3 +489,4 @@ public class EssentialsExpansion extends PlaceholderExpansion {
         return String.valueOf(d);
     }
 }
+
