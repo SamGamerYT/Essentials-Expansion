@@ -42,9 +42,9 @@ import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.regex.*;
+
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 public class EssentialsExpansion extends PlaceholderExpansion {
@@ -255,15 +255,6 @@ public class EssentialsExpansion extends PlaceholderExpansion {
             User user = essentials.getUser(player.getUniqueId());
             long time;
 
-            if (kitName.startsWith("raw_")) {
-                raw = true;
-                kitName = kitName.substring(4);
-
-                if (kitName.isEmpty()) {
-                    return "Invalid kit name";
-                }
-            }
-
             try {
                 kit = new Kit(kitName, essentials);
             } catch (Exception e) {
@@ -329,12 +320,13 @@ public class EssentialsExpansion extends PlaceholderExpansion {
         if (identifier.startsWith("home_")) {
             Integer homeNumber;
             final User user = essentials.getUser(player.getUniqueId());
-
-            // Removes all the letters from the identifier to get the home slot.
-            // Checks if the number slot is an integer or not.
-            if ((homeNumber = Ints.tryParse(identifier.replaceAll("\\D+", ""))) == null) return null;
-
-            // Since it is easier for users to type from 1-x I subtract one from the original number to work from 0-x.
+        
+            // Use regular expression to extract the numeric part
+            Matcher matcher = Pattern.compile("\\d+").matcher(identifier);
+            if (!matcher.find()) return null; // No numeric part found
+            homeNumber = Integer.parseInt(matcher.group());
+        
+            // Since it is easier for users to type from 1-x, subtract one from the original number to work from 0-x.
             homeNumber -= 1;
 
             // checks if the home is out of bounds and returns and empty string if it is.
@@ -489,4 +481,3 @@ public class EssentialsExpansion extends PlaceholderExpansion {
         return String.valueOf(d);
     }
 }
-
